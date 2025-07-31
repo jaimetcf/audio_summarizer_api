@@ -1,0 +1,35 @@
+# Web Framework and Server
+fastapi
+uvicorn
+python-multipart
+
+# OpenAI and AI/ML
+openai==1.98.0
+openai-agents==0.2.4
+
+# Data Validation and Serialization
+pydantic
+
+# Firebase Integration
+firebase-admin
+
+# Document Processing
+python-docx
+
+# HTTP Client
+httpx
+
+# Authentication and Security
+python-jose[cryptography]
+
+# Testing
+pytest
+pytest-asyncio
+anyio
+pytest-tornasync
+pytest-trio
+pytest-twisted
+twisted
+
+# Development Tools
+python-dotenv
