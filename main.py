@@ -64,31 +64,29 @@ async def summarize_audio(
         all_transcripts = []
         
         for i, chunk_file in enumerate(chunk_files):
-            print(f"Transcribing chunk {i+1}/{len(chunk_files)}: {os.path.basename(chunk_file)}")
+            print(f"\n\n  Transcribing chunk {i+1}/{len(chunk_files)}: {os.path.basename(chunk_file)}")
             transcript = await transcribe_audio(chunk_file)
-            print(f"\n\n  Transcript: {i+1}/{len(chunk_files)}: {transcript}")
+            #print(f"\nTranscript: {i+1}/{len(chunk_files)}: {transcript}")
             all_transcripts.append(transcript)
         
         # Combine all transcripts
         full_transcript = "\n\n".join(all_transcripts)
         
-        # Save transcript to file
+        print(f"\nSaving transcript => ... ")
         audio_file_name = os.path.basename(audio_file_path)
         transcript_file_name = audio_file_name.replace('.mp3', '.txt')
-        transcript_file_path = os.path.join(transcript_files_folder, transcript_file_name)
-        
-        # Ensure transcript directory exists
-        os.makedirs(transcript_files_folder, exist_ok=True)
-        
-        # Save transcript to file
+        transcript_file_path = os.path.join(transcript_files_folder, transcript_file_name)        
+        os.makedirs(transcript_files_folder, exist_ok=True)        
         with open(transcript_file_path, 'w', encoding='utf-8') as f:
             f.write(full_transcript)
         print(f"✓ Successfully saved transcript: {transcript_file_path}")
         
         print(f"\nExtracting template content => ... ")
         template_content = extract_template_content(template_file_path)
+        
         print(f"\nSummarizing transcript => ... ")
         summary = await summarize_transcript(full_transcript, template_content)
+        
         print(f"\nSaving report => ... ")
         save_report(summary, report_file_path)
         print('\n\n')
