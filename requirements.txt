@@ -16,6 +16,9 @@ firebase-admin
 # Document Processing
 python-docx
 
+# Audio Processing
+pydub
+
 # HTTP Client
 httpx
 
