@@ -10,7 +10,7 @@ from pydub import AudioSegment
 import math
 
 from settings import settings
-from helper_agents.transcriber_agent import transcriber_agent, TranscriberOutput
+from helper_agents.transcriber_agent_2 import transcriber_agent_2, Transcriber2Output
 from helper_agents.summarizer_agent import summarizer_agent, SummarizerOutput
 
 
@@ -168,21 +168,27 @@ async def transcribe_audio(audio_file_path: str) -> str:
     try:
         # Call the transcriber agent
         result = await Runner.run( 
-            transcriber_agent, 
+            transcriber_agent_2, 
             f"Transcribe the audio file at {audio_file_path}"
         )
         
-        if isinstance(result.final_output, TranscriberOutput):
-            assert len(result.final_output.transcript) > 0, "Transcript should not be empty"
-            print(f"✓ Successfully transcribed via AI agent: {len(result.final_output.transcript)} characters")
-            #print(f"  Sample transcript: {result.final_output.transcript[:100]}...")
+        if isinstance(result.final_output, Transcriber2Output):
+            # Convert the list of TranscriberParagraph objects to a single transcript string
+            transcript_parts = []
+            for paragraph in result.final_output.transcript:
+                transcript_parts.append(f"{paragraph.speaker}: {paragraph.paragraph}")
+            
+            full_transcript = "\n\n".join(transcript_parts)
+            assert len(full_transcript) > 0, "Transcript should not be empty"
+            print(f"✓ Successfully transcribed via AI agent: {len(full_transcript)} characters")
+            #print(f"  Sample transcript: {full_transcript[:100]}...")
+            return full_transcript
         else:
             # Fallback for string output
             assert len(str(result.final_output)) > 0, "Transcript should not be empty"
             print(f"✓ Successfully transcribed via AI agent: {len(str(result.final_output))} characters")
             #print(f"  Sample transcript: {str(result.final_output)[:100]}...")
-
-        return result.final_output.transcript
+            return str(result.final_output)
         
     except Exception as e:
         raise Exception(f"Failed to transcribe audio: {str(e)}")
