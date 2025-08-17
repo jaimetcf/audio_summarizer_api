@@ -65,6 +65,10 @@ test-results/
 tests/__pycache__/
 test_*__pycache__/
 
+# Test files and folders
+test*/
+*test*/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
