@@ -1,3 +1,36 @@
+"""
+Audio Summarizer API - Main Application
+
+This module provides a comprehensive audio processing pipeline that transcribes audio files
+and generates structured reports based on the content. The application uses OpenAI's
+Agents SDK to leverage advanced AI capabilities for transcription and summarization.
+
+Key Features:
+- Audio file processing with automatic chunking for large files (>25MB)
+- Advanced transcription with speaker identification using transcriber_agent_2
+- Intelligent summarization using AI agents with customizable report templates
+- Support for multiple audio formats (primarily MP3)
+- Structured output generation in Word document format
+
+Main Components:
+1. Audio Processing: Breaks down large audio files into manageable chunks
+2. Transcription: Uses OpenAI Whisper API with speaker identification
+3. Summarization: Generates reports based on transcript content and templates
+4. Report Generation: Creates structured Word documents with analysis
+
+Usage:
+    python main.py --audio-file <filename> --template-file <template>
+
+Dependencies:
+- OpenAI API for transcription and summarization
+- python-docx for Word document generation
+- pydub for audio file processing
+- Custom helper agents for specialized AI tasks
+
+Author: Audio Summarizer API Team
+Version: 2.0 (with speaker identification)
+"""
+
 import os
 from typing import Optional, List
 import asyncio
