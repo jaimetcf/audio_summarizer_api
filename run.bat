@@ -1,1 +1,0 @@
-python main.py --audio-file israel-paylocity.mp3 --template-file interview_report_template.docx
