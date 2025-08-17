@@ -119,3 +119,6 @@ config.py
 
 # Ignore data files
 data/
+
+# Batch files
+*.bat
