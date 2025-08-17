@@ -45,6 +45,7 @@ import math
 from settings import settings
 from helper_agents.transcriber_agent_2 import transcriber_agent_2, Transcriber2Output
 from helper_agents.summarizer_agent import summarizer_agent, SummarizerOutput
+from helper_agents.summary_reviewer_agent import summary_reviewer_agent, SummaryReviewerOutput
 
 
 # Default values
@@ -245,25 +246,48 @@ def extract_template_content(template_path: str) -> str:
 
 async def summarize_transcript(transcript: str, template_content: str) -> str:
     """
-    Generate report using OpenAI Agents SDK
+    Generate report using OpenAI Agents SDK with peer review
     """
     try:
+        # Step 1: Generate initial summary
+        print(f"  Step 1: Generating initial summary...")
         result = await Runner.run(
             summarizer_agent,
             f"Generate a report based on the following transcript and template: {transcript}\n\nTemplate: {template_content}"
         )
         
         if isinstance(result.final_output, SummarizerOutput):
-            assert len(result.final_output.summary) > 0, "Summary should not be empty"
-            print(f"✓ Successfully generated summary via AI agent: {len(result.final_output.summary)} characters")
-            #print(f"  Sample summary: {result.final_output.summary[:100]}...")
-            return result.final_output.summary
+            initial_summary = result.final_output.summary
         else:
-            # Fallback for string output
-            assert len(str(result.final_output)) > 0, "Summary should not be empty"
-            print(f"✓ Successfully generated summary via AI agent: {len(str(result.final_output))} characters")
-            #print(f"  Sample summary: {str(result.final_output)[:100]}...")
-            return str(result.final_output)
+            initial_summary = str(result.final_output)
+            
+        assert len(initial_summary) > 0, "Summary should not be empty"
+        print(f"✓ Successfully generated initial summary: {len(initial_summary)} characters")
+        
+        # Step 2: Perform peer review and improvement
+        print(f"  Step 2: Performing peer review and improvement...")
+        review_result = await Runner.run(
+            summary_reviewer_agent,
+            f"Review and improve the following summary based on the transcript and template:\n\nTranscript: {transcript}\n\nTemplate: {template_content}\n\nOriginal Summary: {initial_summary}"
+        )
+        
+        if isinstance(review_result.final_output, SummaryReviewerOutput):
+            reviewed_summary = review_result.final_output.reviewed_summary
+            corrections = review_result.final_output.corrections_made
+            quality_score = review_result.final_output.quality_score
+            improvement_notes = review_result.final_output.improvement_notes
+            
+            print(f"✓ Peer review completed:")
+            print(f"  - Quality score: {quality_score}/10")
+            print(f"  - Corrections made: {corrections}")
+            print(f"  - Improvement notes: {improvement_notes}")
+            print(f"  - Final summary length: {len(reviewed_summary)} characters")
+            
+            return reviewed_summary
+        else:
+            # Fallback to original summary if review fails
+            print(f"⚠ Review failed, using original summary")
+            return initial_summary
 
     except Exception as e:
         raise Exception(f"Failed to summarize transcript: {str(e)}")

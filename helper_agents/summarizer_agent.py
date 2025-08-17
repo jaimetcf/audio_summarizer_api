@@ -32,7 +32,7 @@ def generate_summary(transcript: str, template_content: str) -> str:
                 {"role": "system", "content": "You are a professional report writer. Create clear, well-structured reports."},
                 {"role": "user", "content": report_prompt}
             ],
-            max_tokens=2000
+            max_tokens=4000
         )
         
         return response.choices[0].message.content
